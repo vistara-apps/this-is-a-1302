@@ -1,78 +1,149 @@
-import React from 'react'
-import { Play, Clock, User, FileText } from 'lucide-react'
-import StatusBadge from './StatusBadge'
-import clsx from 'clsx'
+import React, { useState } from 'react';
+import { Play, Pause, Clock, Music, Key, Zap, Lock } from 'lucide-react';
+import LicenseBadge from './LicenseBadge';
+import { usePaymentContext } from '../hooks/usePaymentContext';
 
-const SampleCard = ({ sample, variant = 'default' }) => {
-  const isCompact = variant === 'compactWithImage'
-  const withStatus = variant === 'withStatus'
+const SampleCard = ({ sample, variant = 'default', onSampleSelect }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasAccess, setHasAccess] = useState(!sample.premium);
+  const [isLoading, setIsLoading] = useState(false);
+  const { createSession } = usePaymentContext();
+
+  const handlePlayPause = (e) => {
+    e.stopPropagation();
+    if (sample.premium && !hasAccess) {
+      handlePremiumAccess();
+      return;
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handlePremiumAccess = async () => {
+    setIsLoading(true);
+    try {
+      await createSession();
+      setHasAccess(true);
+      setIsPlaying(true);
+    } catch (error) {
+      console.error('Payment failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (onSampleSelect) {
+      onSampleSelect(sample);
+    }
+  };
+
+  if (variant === 'compact') {
+    return (
+      <div 
+        className="card hover:cursor-pointer animate-fade-in"
+        onClick={handleCardClick}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-text truncate">{sample.title}</h3>
+            <p className="text-sm text-muted-foreground truncate">{sample.artist}</p>
+            <LicenseBadge licenseType={sample.licenseType} cleared={sample.cleared} />
+          </div>
+          <button
+            onClick={handlePlayPause}
+            disabled={isLoading}
+            className="ml-3 w-10 h-10 btn-primary rounded-full flex items-center justify-center disabled:opacity-50"
+          >
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : sample.premium && !hasAccess ? (
+              <Lock className="w-4 h-4" />
+            ) : isPlaying ? (
+              <Pause className="w-4 h-4" />
+            ) : (
+              <Play className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={clsx(
-      'bg-dark-surface border border-dark-border rounded-lg p-4 hover:border-primary/50 transition-all duration-200',
-      'shadow-dark-card hover:shadow-dark-modal'
-    )}>
-      {isCompact ? (
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-md flex items-center justify-center">
-            <Play className="w-5 h-5 text-white" />
+    <div 
+      className="card hover:cursor-pointer animate-slide-up"
+      onClick={handleCardClick}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-text truncate">{sample.title}</h3>
+            {sample.premium && (
+              <Zap className="w-4 h-4 text-accent flex-shrink-0" title="Premium sample" />
+            )}
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-medium text-dark-text truncate">
-              {sample.identifiedSongTitle || 'Unknown Track'}
-            </h3>
-            <p className="text-xs text-dark-text-secondary truncate">
-              {sample.originalArtist || 'Unknown Artist'}
-            </p>
+          <p className="text-sm text-muted-foreground mb-2">{sample.artist}</p>
+          <LicenseBadge licenseType={sample.licenseType} cleared={sample.cleared} />
+        </div>
+        <button
+          onClick={handlePlayPause}
+          disabled={isLoading}
+          className="ml-3 w-12 h-12 btn-primary rounded-full flex items-center justify-center disabled:opacity-50"
+        >
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : sample.premium && !hasAccess ? (
+            <Lock className="w-5 h-5" />
+          ) : isPlaying ? (
+            <Pause className="w-5 h-5" />
+          ) : (
+            <Play className="w-5 h-5" />
+          )}
+        </button>
+      </div>
+
+      <div className="space-y-2 mb-4">
+        <p className="text-sm text-muted-foreground">{sample.description}</p>
+        
+        <div className="flex flex-wrap gap-2 text-xs">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="w-3 h-3" />
+            <span>{sample.duration}</span>
           </div>
-          {withStatus && (
-            <StatusBadge status={sample.clearanceStatus} />
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Music className="w-3 h-3" />
+            <span>{sample.bpm} BPM</span>
+          </div>
+          {sample.key && (
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Key className="w-3 h-3" />
+              <span>{sample.key}</span>
+            </div>
           )}
         </div>
-      ) : (
-        <div className="space-y-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="text-base font-semibold text-dark-text mb-1">
-                {sample.identifiedSongTitle || 'Unknown Track'}
-              </h3>
-              <p className="text-sm text-dark-text-secondary">
-                {sample.originalArtist || 'Unknown Artist'}
-              </p>
-            </div>
-            {withStatus && (
-              <StatusBadge status={sample.clearanceStatus} />
-            )}
-          </div>
 
-          <div className="flex items-center space-x-4 text-xs text-dark-text-secondary">
-            <div className="flex items-center space-x-1">
-              <Clock className="w-3 h-3" />
-              <span>{new Date(sample.createdAt).toLocaleDateString()}</span>
-            </div>
-            {sample.rightsHolderName && (
-              <div className="flex items-center space-x-1">
-                <User className="w-3 h-3" />
-                <span>{sample.rightsHolderName}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-dark-border">
-            <button className="flex items-center space-x-2 px-3 py-1.5 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors text-sm">
-              <Play className="w-3 h-3" />
-              <span>Play Sample</span>
-            </button>
-            
-            <button className="flex items-center space-x-2 px-3 py-1.5 border border-dark-border text-dark-text rounded-md hover:bg-dark-bg transition-colors text-sm">
-              <FileText className="w-3 h-3" />
-              <span>Request Clearance</span>
-            </button>
-          </div>
+        <div className="flex flex-wrap gap-1">
+          {sample.tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 text-xs bg-bg border border-surface rounded-sm text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-      )}
-    </div>
-  )
-}
+      </div>
 
-export default SampleCard
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-text">
+          {sample.price === 0 ? 'Free' : `$${sample.price}`}
+        </span>
+        <button className="btn-secondary text-sm">
+          View Details
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default SampleCard;

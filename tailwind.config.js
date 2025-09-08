@@ -7,49 +7,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "hsl(210, 90%, 50%)",
-        accent: "hsl(30, 90%, 60%)",
-        background: "hsl(200, 10%, 95%)",
-        surface: "hsl(0, 0%, 100%)",
-        "text-primary": "hsl(210, 20%, 20%)",
-        "text-secondary": "hsl(210, 20%, 40%)",
-        dark: {
-          bg: "hsl(220, 20%, 8%)",
-          surface: "hsl(220, 20%, 12%)",
-          border: "hsl(220, 20%, 18%)",
-          text: "hsl(0, 0%, 95%)",
-          "text-secondary": "hsl(0, 0%, 70%)"
-        }
-      },
-      fontSize: {
-        'display': ['3rem', { lineHeight: '1.1', fontWeight: '700' }],
-        'heading': ['1.5rem', { lineHeight: '1.3', fontWeight: '600' }],
-        'body': ['1rem', { lineHeight: '1.75' }],
-        'caption': ['0.875rem', { fontWeight: '500' }]
+        bg: 'hsl(220 15% 10%)',
+        text: 'hsl(220 10% 90%)',
+        accent: 'hsl(180 50% 60%)',
+        primary: 'hsl(220 80% 50%)',
+        surface: 'hsl(220 15% 15%)',
+        'muted-foreground': 'hsl(220 10% 60%)',
       },
       borderRadius: {
-        'sm': '6px',
-        'md': '10px',
         'lg': '16px',
-        'xl': '24px'
+        'md': '10px',
+        'sm': '6px',
       },
       spacing: {
-        'xs': '4px',
-        'sm': '8px',
+        'lg': '20px',
         'md': '12px',
-        'lg': '16px',
-        'xl': '20px',
-        'xxl': '24px'
+        'sm': '8px',
       },
       boxShadow: {
-        'card': '0 4px 12px hsla(210, 20%, 20%, 0.1)',
-        'modal': '0 8px 24px hsla(210, 20%, 20%, 0.12)',
-        'dark-card': '0 4px 12px hsla(0, 0%, 0%, 0.3)',
-        'dark-modal': '0 8px 24px hsla(0, 0%, 0%, 0.4)'
+        'card': '0 4px 12px hsla(0, 0%, 0%, 0.08)',
+        'depth': '0 12px 28px hsla(0, 0%, 0%, 0.16)',
       },
       animation: {
-        'fade-in': 'fadeIn 250ms cubic-bezier(0.22,1,0.36,1)',
-        'slide-up': 'slideUp 250ms cubic-bezier(0.22,1,0.36,1)',
+        'fade-in': 'fadeIn 0.25s cubic-bezier(0.22,1,0.36,1)',
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.22,1,0.36,1)',
       },
       keyframes: {
         fadeIn: {
@@ -57,10 +38,10 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
-      }
+        },
+      },
     },
   },
   plugins: [],

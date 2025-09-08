@@ -2,22 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: hsl(220 15% 10%);
+    color: hsl(220 10% 90%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(220 15% 15%);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220 10% 30%);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 10% 40%);
+  }
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, #3b82f6, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+@layer components {
+  .btn-primary {
+    background-color: hsl(220 80% 50%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(220 80% 45%);
+    transform: translateY(-1px);
+  }
+  
+  .btn-secondary {
+    background-color: hsl(220 15% 15%);
+    color: hsl(220 10% 90%);
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: 1px solid hsl(220 15% 25%);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(220 15% 20%);
+    border-color: hsl(220 15% 35%);
+  }
+  
+  .card {
+    background-color: hsl(220 15% 15%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid hsl(220 15% 25%);
+    box-shadow: 0 4px 12px hsla(0, 0%, 0%, 0.08);
+    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  
+  .card:hover {
+    border-color: hsl(220 15% 35%);
+    box-shadow: 0 12px 28px hsla(0, 0%, 0%, 0.16);
   }
 }
