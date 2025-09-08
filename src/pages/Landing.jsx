@@ -1,153 +1,160 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Music, Search, FileText, Users, Check } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { useSubscription } from '../contexts/SubscriptionContext'
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { 
+  MusicalNoteIcon,
+  MagnifyingGlassIcon,
+  DocumentCheckIcon,
+  UserGroupIcon,
+  ClockIcon,
+  ShieldCheckIcon,
+  BoltIcon
+} from '@heroicons/react/24/outline'
 
-const Landing = () => {
-  const navigate = useNavigate()
-  const { login, signup } = useAuth()
-  const { tiers, upgradeTier } = useSubscription()
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleAuth = async (e) => {
-    e.preventDefault()
-    try {
-      if (isLogin) {
-        await login(email, password)
-      } else {
-        await signup(email, password)
-      }
-      navigate('/app')
-    } catch (error) {
-      console.error('Authentication error:', error)
-    }
+const features = [
+  {
+    icon: MagnifyingGlassIcon,
+    title: 'Sample Identification & Discovery',
+    description: 'Upload audio snippets or provide song titles to identify potential samples and their original sources using AI-powered matching.'
+  },
+  {
+    icon: UserGroupIcon,
+    title: 'Rights Holder Contact Database',
+    description: 'Access verified contact information for music publishers, labels, and administrators for seamless sample clearance outreach.'
+  },
+  {
+    icon: DocumentCheckIcon,
+    title: 'Standardized Clearance Forms',
+    description: 'Generate pre-filled, customizable forms that include all necessary information for faster clearance processing.'
+  },
+  {
+    icon: ClockIcon,
+    title: 'Deal Tracking & Management',
+    description: 'Centralized dashboard to manage all ongoing sample clearance requests, contracts, and payments with status updates.'
   }
+]
 
-  const handleGetStarted = (tier) => {
-    upgradeTier(tier)
-    navigate('/app')
+const pricing = [
+  {
+    name: 'Free',
+    price: '$0',
+    period: '/month',
+    description: 'Perfect for getting started',
+    features: [
+      '5 sample searches per month',
+      '2 clearance requests per month',
+      'Basic rights holder database',
+      'Standard forms'
+    ],
+    cta: 'Get Started',
+    popular: false
+  },
+  {
+    name: 'Creator',
+    price: '$15',
+    period: '/month',
+    description: 'For active remix artists',
+    features: [
+      'Unlimited sample searches',
+      '10 clearance requests per month',
+      'Full rights holder database',
+      'Premium form templates',
+      'Email support'
+    ],
+    cta: 'Start Creator Plan',
+    popular: true
+  },
+  {
+    name: 'Pro',
+    price: '$49',
+    period: '/month',
+    description: 'For professional producers',
+    features: [
+      'Everything in Creator',
+      'Unlimited clearance requests',
+      'Priority processing',
+      'Advanced analytics',
+      'Direct agent outreach',
+      'Priority support'
+    ],
+    cta: 'Go Pro',
+    popular: false
   }
+]
 
+export default function Landing() {
   return (
     <div className="min-h-screen bg-dark-bg">
       {/* Header */}
       <header className="border-b border-dark-border">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
-              <Music className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold text-dark-text">SampleSecure</span>
+              <MusicalNoteIcon className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-bold text-dark-text">SampleSecure</span>
             </div>
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-dark-text-secondary hover:text-dark-text transition-colors">Features</a>
-              <a href="#pricing" className="text-dark-text-secondary hover:text-dark-text transition-colors">Pricing</a>
-              <a href="#about" className="text-dark-text-secondary hover:text-dark-text transition-colors">About</a>
-              <button 
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:text-primary/80 transition-colors"
+            <div className="flex items-center space-x-4">
+              <Link
+                to="/auth"
+                className="text-dark-text-secondary hover:text-dark-text transition-colors"
               >
-                {isLogin ? 'Sign Up' : 'Login'}
-              </button>
-            </nav>
+                Sign In
+              </Link>
+              <Link
+                to="/auth"
+                className="btn-primary"
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-dark-text mb-6">
-            Our Remix Sample Secure<br />
-            <span className="text-gradient">for artists Simple or Clearways</span>
+      <section className="py-20 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl lg:text-7xl font-bold text-dark-text mb-6">
+            Our Remix Sample Secure
+            <br />
+            <span className="text-primary">for amast Simpe or Clearwass</span>
           </h1>
           <p className="text-xl text-dark-text-secondary mb-8 max-w-3xl mx-auto">
             Find, clear, and manage your music samples in minutes, not months. 
-            SampleSecure streamlines the entire sample clearance process for remix artists.
+            SampleSecure helps remix artists quickly identify, legally clear, and track music samples using a streamlined platform.
           </p>
-          
-          {/* Auth Form */}
-          <div className="max-w-md mx-auto mb-12">
-            <form onSubmit={handleAuth} className="bg-dark-surface p-6 rounded-lg border border-dark-border">
-              <h3 className="text-lg font-semibold text-dark-text mb-4">
-                {isLogin ? 'Login to Continue' : 'Create Your Account'}
-              </h3>
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-md text-dark-text placeholder-dark-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-dark-bg border border-dark-border rounded-md text-dark-text placeholder-dark-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  {isLogin ? 'Login' : 'Sign Up'}
-                </button>
-              </div>
-              <p className="text-sm text-dark-text-secondary mt-4 text-center">
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
-                <button
-                  type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-primary hover:text-primary/80"
-                >
-                  {isLogin ? 'Sign Up' : 'Login'}
-                </button>
-              </p>
-            </form>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/auth" className="btn-primary text-lg px-8 py-4">
+              Start Free Trial
+            </Link>
+            <button className="btn-secondary text-lg px-8 py-4">
+              Watch Demo
+            </button>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 bg-dark-surface">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-dark-text mb-12">
-            Everything you need for sample clearance
-          </h2>
+      <section className="py-20 bg-dark-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-dark-text mb-4">
+              Everything you need to clear samples
+            </h2>
+            <p className="text-xl text-dark-text-secondary">
+              Streamline your sample clearance workflow with our comprehensive platform
+            </p>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Search,
-                title: 'Sample Identification',
-                description: 'AI-powered audio matching to identify samples and their original sources.'
-              },
-              {
-                icon: Users,
-                title: 'Rights Holder Database',
-                description: 'Access verified contact information for music publishers and labels.'
-              },
-              {
-                icon: FileText,
-                title: 'Clearance Forms',
-                description: 'Pre-filled, standardized forms for faster clearance requests.'
-              },
-              {
-                icon: Music,
-                title: 'Deal Tracking',
-                description: 'Centralized dashboard to manage all your sample agreements.'
-              }
-            ].map((feature, index) => (
-              <div key={index} className="text-center">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-dark-text mb-2">{feature.title}</h3>
-                <p className="text-dark-text-secondary">{feature.description}</p>
+            {features.map((feature, index) => (
+              <div key={index} className="card text-center">
+                <feature.icon className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-dark-text mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-dark-text-secondary">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
@@ -155,51 +162,105 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-dark-text mb-12">
-            Choose your plan
-          </h2>
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-dark-text mb-4">
+              Choose your plan
+            </h2>
+            <p className="text-xl text-dark-text-secondary">
+              Start free and scale as you grow
+            </p>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {Object.entries(tiers).map(([key, tier]) => (
-              <div key={key} className="bg-dark-surface border border-dark-border rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-dark-text mb-2">{tier.name}</h3>
-                <div className="text-3xl font-bold text-dark-text mb-4">
-                  ${tier.price}<span className="text-lg text-dark-text-secondary">/mo</span>
+            {pricing.map((plan, index) => (
+              <div key={index} className={`card relative ${
+                plan.popular ? 'ring-2 ring-primary' : ''
+              }`}>
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-semibold text-dark-text mb-2">
+                    {plan.name}
+                  </h3>
+                  <p className="text-dark-text-secondary mb-4">
+                    {plan.description}
+                  </p>
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-4xl font-bold text-dark-text">
+                      {plan.price}
+                    </span>
+                    <span className="text-dark-text-secondary ml-1">
+                      {plan.period}
+                    </span>
+                  </div>
                 </div>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-center text-dark-text-secondary">
-                    <Check className="w-4 h-4 text-green-500 mr-2" />
-                    {tier.clearances === -1 ? 'Unlimited' : tier.clearances} clearances/month
-                  </li>
-                  <li className="flex items-center text-dark-text-secondary">
-                    <Check className="w-4 h-4 text-green-500 mr-2" />
-                    {tier.searches === -1 ? 'Unlimited' : tier.searches} searches/month
-                  </li>
-                  <li className="flex items-center text-dark-text-secondary">
-                    <Check className="w-4 h-4 text-green-500 mr-2" />
-                    Rights holder database access
-                  </li>
-                  {key === 'pro' && (
-                    <li className="flex items-center text-dark-text-secondary">
-                      <Check className="w-4 h-4 text-green-500 mr-2" />
-                      Priority support
+                
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center">
+                      <ShieldCheckIcon className="h-5 w-5 text-primary mr-3" />
+                      <span className="text-dark-text-secondary">{feature}</span>
                     </li>
-                  )}
+                  ))}
                 </ul>
-                <button
-                  onClick={() => handleGetStarted(key)}
-                  className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors"
+                
+                <Link
+                  to="/auth"
+                  className={`block w-full text-center py-3 rounded-lg font-medium transition-colors ${
+                    plan.popular
+                      ? 'bg-primary hover:bg-primary/90 text-white'
+                      : 'bg-dark-border hover:bg-dark-text-secondary text-dark-text'
+                  }`}
                 >
-                  Get Started
-                </button>
+                  {plan.cta}
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-primary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Ready to streamline your sample clearance?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Join thousands of artists who trust SampleSecure for their sample clearance needs
+          </p>
+          <Link
+            to="/auth"
+            className="inline-flex items-center px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <BoltIcon className="h-5 w-5 mr-2" />
+            Get Started Now
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-dark-surface border-t border-dark-border py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <MusicalNoteIcon className="h-6 w-6 text-primary" />
+              <span className="text-lg font-semibold text-dark-text">SampleSecure</span>
+            </div>
+            <div className="text-dark-text-secondary">
+              © 2024 SampleSecure. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
-
-export default Landing

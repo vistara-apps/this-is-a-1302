@@ -1,130 +1,62 @@
-import React, { useState, useMemo } from 'react';
-import AppShell from './components/AppShell';
-import SearchInput from './components/SearchInput';
-import SampleCard from './components/SampleCard';
-import FilterPanel from './components/FilterPanel';
-import SampleDetail from './components/SampleDetail';
-import { mockSamples } from './data/mockSamples';
+import React, { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { DataProvider } from './contexts/DataContext'
+import Layout from './components/Layout'
+import Landing from './pages/Landing'
+import Dashboard from './pages/Dashboard'
+import FindSamples from './pages/FindSamples'
+import MyClearances from './pages/MyClearances'
+import RightsHolders from './pages/RightsHolders'
+import Settings from './pages/Settings'
+import Auth from './pages/Auth'
+import Subscription from './pages/Subscription'
 
-function App() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('All');
-  const [selectedLicense, setSelectedLicense] = useState('All');
-  const [priceRange, setPriceRange] = useState('50');
-  const [onlyCleared, setOnlyCleared] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedSample, setSelectedSample] = useState(null);
+function AppRoutes() {
+  const { user, loading } = useAuth()
 
-  const filteredSamples = useMemo(() => {
-    return mockSamples.filter(sample => {
-      const matchesSearch = sample.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           sample.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           sample.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      const matchesGenre = selectedGenre === 'All' || sample.genre === selectedGenre;
-      const matchesLicense = selectedLicense === 'All' || sample.licenseType === selectedLicense;
-      const matchesPrice = sample.price <= parseInt(priceRange);
-      const matchesCleared = !onlyCleared || sample.cleared;
-
-      return matchesSearch && matchesGenre && matchesLicense && matchesPrice && matchesCleared;
-    });
-  }, [searchQuery, selectedGenre, selectedLicense, priceRange, onlyCleared]);
-
-  if (selectedSample) {
+  if (loading) {
     return (
-      <AppShell>
-        <SampleDetail 
-          sample={selectedSample} 
-          onBack={() => setSelectedSample(null)} 
-        />
-      </AppShell>
-    );
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    )
   }
 
   return (
-    <AppShell>
-      <div className="space-y-6">
-        <section className="text-center py-8">
-          <h1 className="text-3xl font-bold text-text mb-2">SampleSecure</h1>
-          <p className="text-lg text-muted-foreground mb-6">
-            Legally clear music samples for your remixes, instantly.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-            <div className="card text-center">
-              <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-accent font-bold">1</span>
-              </div>
-              <h3 className="font-medium text-text mb-1">Search & Discover</h3>
-              <p className="text-muted-foreground">Find samples by genre, mood, or instrument</p>
-            </div>
-            <div className="card text-center">
-              <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-accent font-bold">2</span>
-              </div>
-              <h3 className="font-medium text-text mb-1">Verify Clearance</h3>
-              <p className="text-muted-foreground">Check legal status and usage rights</p>
-            </div>
-            <div className="card text-center">
-              <div className="w-8 h-8 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-accent font-bold">3</span>
-              </div>
-              <h3 className="font-medium text-text mb-1">Create Safely</h3>
-              <p className="text-muted-foreground">Use samples with confidence</p>
-            </div>
-          </div>
-        </section>
-
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          onFilterClick={() => setShowFilters(true)}
-          placeholder="Search samples by title, artist, or tags..."
-        />
-
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-text">
-            Sample Library
-            <span className="text-sm text-muted-foreground ml-2">
-              ({filteredSamples.length} samples)
-            </span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4">
-          {filteredSamples.map((sample) => (
-            <SampleCard
-              key={sample.sampleId}
-              sample={sample}
-              onSampleSelect={setSelectedSample}
-            />
-          ))}
-        </div>
-
-        {filteredSamples.length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl text-muted-foreground">🎵</span>
-            </div>
-            <h3 className="text-lg font-medium text-text mb-2">No samples found</h3>
-            <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
-          </div>
-        )}
-      </div>
-
-      <FilterPanel
-        isOpen={showFilters}
-        onClose={() => setShowFilters(false)}
-        selectedGenre={selectedGenre}
-        setSelectedGenre={setSelectedGenre}
-        selectedLicense={selectedLicense}
-        setSelectedLicense={setSelectedLicense}
-        priceRange={priceRange}
-        setPriceRange={setPriceRange}
-        onlyCleared={onlyCleared}
-        setOnlyCleared={setOnlyCleared}
-      />
-    </AppShell>
-  );
+    <DataProvider>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/find-samples" element={<FindSamples />} />
+          <Route path="/clearances" element={<MyClearances />} />
+          <Route path="/rights-holders" element={<RightsHolders />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Layout>
+    </DataProvider>
+  )
 }
 
-export default App;
+function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  )
+}
+
+export default App

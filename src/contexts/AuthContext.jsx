@@ -1,50 +1,72 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext()
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
+export function useAuth() {
+  return useContext(AuthContext)
 }
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const login = async (email, password) => {
-    // Mock authentication
+  useEffect(() => {
+    // Simulate auth check
+    const savedUser = localStorage.getItem('samplesecure_user')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    }
+    setLoading(false)
+  }, [])
+
+  const signIn = async (email, password) => {
+    // Simulate sign in
     const mockUser = {
-      userId: 'user-1',
-      email: email,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      id: '1',
+      email,
+      subscriptionTier: 'free',
+      createdAt: new Date().toISOString()
     }
     setUser(mockUser)
-    setIsAuthenticated(true)
+    localStorage.setItem('samplesecure_user', JSON.stringify(mockUser))
     return mockUser
   }
 
-  const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
+  const signUp = async (email, password) => {
+    // Simulate sign up
+    const mockUser = {
+      id: Math.random().toString(36).substr(2, 9),
+      email,
+      subscriptionTier: 'free',
+      createdAt: new Date().toISOString()
+    }
+    setUser(mockUser)
+    localStorage.setItem('samplesecure_user', JSON.stringify(mockUser))
+    return mockUser
   }
 
-  const signup = async (email, password) => {
-    // Mock signup
-    return login(email, password)
+  const signOut = () => {
+    setUser(null)
+    localStorage.removeItem('samplesecure_user')
+  }
+
+  const updateSubscription = (tier) => {
+    const updatedUser = { ...user, subscriptionTier: tier }
+    setUser(updatedUser)
+    localStorage.setItem('samplesecure_user', JSON.stringify(updatedUser))
+  }
+
+  const value = {
+    user,
+    signIn,
+    signUp,
+    signOut,
+    updateSubscription,
+    loading
   }
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated,
-      login,
-      logout,
-      signup
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )
